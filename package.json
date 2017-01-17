@@ -2,9 +2,9 @@
   "name": "gsm-modem-connection",
   "description": "Manage GSM modem connection",
   "licence": "MIT",
-  "main": "./out/index.js",
-  "types": "./out/index.d.ts",
-  "version": "1.0.0",
+  "main": "./out/lib/index.js",
+  "types": "./out/lib/index.d.ts",
+  "version": "1.0.1",
   "scripts": {
     "postinstall": "npm run build",
     "build": "npm run tsc && npm run set-rules",
