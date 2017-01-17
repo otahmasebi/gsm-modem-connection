@@ -1,0 +1,40 @@
+{
+  "name": "gsm-modem-connection",
+  "description": "Manage GSM modem connection",
+  "main": "./out/index.js",
+  "types": "./out/index.d.ts",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "npm run build",
+    "build": "npm run tsc && npm run set-rules",
+    "tsc": "./node_modules/.bin/tsc -p ./tsconfig.json",
+    "uninstall": "npm run remove-rules && npm run clean",
+    "set-rules": "sudo node ./out/lib/udevRules.js set",
+    "remove-rules": "sudo node ./out/lib/udevRules.js remove",
+    "clean": "rm -rf ./out ./node_modules",
+    "test": "node ./out/test/main"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/garronej/gsm-modem-connection.git"
+  },
+  "author": "Joseph Garrone",
+  "licence": "MIT",
+  "keywords": [
+    "typeScript",
+    "GSM",
+    "HUAWEI",
+    "serialport",
+    "connection",
+    "udev"
+  ],
+  "dependencies": {
+    "@types/lockfile": "^0.4.29",
+    "@types/node": "^4.0.0",
+    "colors": "^1.1.2",
+    "lockfile": "^1.0.3",
+    "ts-events": "^3.1.5",
+    "typescript": "^2.1.4"
+  },
+  "devDependencies": {}
+}

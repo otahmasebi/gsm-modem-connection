@@ -1,0 +1,17 @@
+{
+    "0x12d1": {
+        "_comment": "Huawei",
+        "0x1001": {
+            "_comment": "E169, K3765, K3520",
+            "audio": 1,
+            "at": 2,
+            "total": 3
+        },
+        "0x1003": {
+            "_comment": "E160E",
+            "audio": 0,
+            "ad": 1,
+            "total": 2
+        }
+    }
+}
