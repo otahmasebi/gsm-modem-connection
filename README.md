@@ -1,6 +1,18 @@
 #gsm-modem-connection
 
-This modem help to manage gsm modem connection and disconnections
+This modem help to manage gsm modem connection and disconnections.
+
+If you want to write a program for a 3G key in order to send SMS/MMS, make
+voicemail or any other usage first you need to switch the key from CD mode 
+to normal mode, this is done automatically by usb_modeswitch integrated to most
+distribution but after you still need more information in order to user your 3G key.
+
+In normal mode your modem will give you access to several serial devices eg
+/dev/ttyUSB1, /dev/ttyUSB2, /dev/ttyUSB3. What this module does is that it 
+will cast an event when a 3G modem is connected and tell you: 
+"The atPort of your modem is /dev/ttyUSB2 and the audio port is /dev/ttyUSB3"
+so you can start using your devices. 
+
 So far it only support Huawei 3G keys but you can update *./knownModem.json*
 to make sure your device will be supported.
 
@@ -120,9 +132,15 @@ Edit *./config.json*
 
 Edit *./knownModem.json*, any pull request welcome.
 
+To support a modem you need to know, total how many serial interface it create ( usually 2 or 3 )
+and what USB component is associated to audio ant to AT command.
+
+If you don't know how to retrieve those information just post an issue and I will, with your help, add support for your modem
+as quickly as possible.
 
 Find information relative to your hardware at this page:
 [List of USB ID's](http://www.linux-usb.org/usb.ids)
+
 
 
 #note
