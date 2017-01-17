@@ -32,7 +32,7 @@ import { ModemWatcher } from "../lib/index";
 
 let modemWatcher = new ModemWatcher();
 
-console.log("Awaiting GSM modem connections");
+console.log("Awaiting GSM modem connections...");
 
 modemWatcher.evtConnect.attach(modem => console.log("CONNECT", modem.infos));
 
@@ -41,8 +41,10 @@ modemWatcher.evtDisconnect.attach(modem => console.log("DISCONNECT", modem.infos
 
 Output: 
 
+After connecting a E169 and a E160 Huawei 3G key:
+
 ````bash
-Awaiting GSM modem connections
+Awaiting GSM modem connections...
 CONNECT { vendorIdHex: '0x12d1',
   modelIdHex: '0x1001',
   isKnowModel: true,
@@ -54,7 +56,7 @@ CONNECT { vendorIdHex: '0x12d1',
   modelIdHex: '0x1003',
   isKnowModel: true,
   rpiPort: 3,
-  atInterface: undefined,
+  atInterface: '/dev/ttyUSB4',
   audioInterface: '/dev/ttyUSB3',
   isFullyBooted: true }
 ````

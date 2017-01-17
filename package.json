@@ -1,6 +1,7 @@
 {
   "name": "gsm-modem-connection",
   "description": "Manage GSM modem connection",
+  "licence": "MIT",
   "main": "./out/index.js",
   "types": "./out/index.d.ts",
   "version": "1.0.0",
@@ -19,7 +20,6 @@
     "url": "git+https://github.com/garronej/gsm-modem-connection.git"
   },
   "author": "Joseph Garrone",
-  "licence": "MIT",
   "keywords": [
     "typeScript",
     "GSM",
