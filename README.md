@@ -120,6 +120,11 @@ Edit *./config.json*
 
 Edit *./knownModem.json*, any pull request welcome.
 
+
+Find information relative to your hardware at this page:
+[List of USB ID's](http://www.linux-usb.org/usb.ids)
+
+
 #note
 
 After editing the .json file uninstall and reinstall the module for the change to take effect.
