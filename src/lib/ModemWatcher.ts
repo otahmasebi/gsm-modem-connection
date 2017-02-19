@@ -1,6 +1,6 @@
-import { statSync, writeFileSync, watch } from "fs";
+import { statSync, writeFileSync, watch, FSWatcher } from "fs";
 import { Modem, SetModem, config, delayReady } from "./Modem";
-import { SyncEvent, AsyncEvent, VoidSyncEvent } from "ts-events";
+import { SyncEvent, AsyncEvent, VoidSyncEvent } from "ts-events-extended";
 
 
 export class ModemWatcher {
@@ -9,7 +9,9 @@ export class ModemWatcher {
     public readonly evtDisconnect = new SyncEvent<Modem>();
     public setModem: SetModem = {};
 
-    private timer: NodeJS.Timer = null;
+
+    private timer: NodeJS.Timer | null= null;
+    private readonly watcher: FSWatcher;
     constructor() {
 
         try{ 
@@ -18,7 +20,8 @@ export class ModemWatcher {
             Modem.exportSetModem(this.setModem);
         }
 
-        watch(config.pathSetModem, (event, filename) => {
+
+        this.watcher= watch(config.pathSetModem, (event, filename) => {
 
             if (this.timer) clearTimeout(this.timer)
 
@@ -33,6 +36,10 @@ export class ModemWatcher {
         });
 
         this.update();
+    }
+
+    public stop(): void{
+        this.watcher.close();
     }
 
     private update(): void {

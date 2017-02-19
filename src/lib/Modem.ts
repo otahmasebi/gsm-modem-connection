@@ -107,14 +107,16 @@ export class Modem {
 
     public get audioInterface(): string {
 
-        if (!this.fullyBooted) return undefined;
+        if( !this.fullyBooted ) return "";
 
         if (this.isKnownModel)
             return this.interfaces[modemDatabase[this.vendorId][this.modelId].audio];
         else {
-
-            if (Object.keys(this.interfaces).length === 3) return this.interfaces[1];
-            if (Object.keys(this.interfaces).length === 2) return this.interfaces[0];
+            switch(Object.keys(this.interfaces).length){
+                case 2: return this.interfaces[0];
+                case 3: return this.interfaces[1];
+                default: throw new Error("Unsupported modem");
+            }
 
         }
 
@@ -122,17 +124,18 @@ export class Modem {
 
     public get atInterface(): string {
 
-        if (!this.fullyBooted) return undefined;
+        if( !this.fullyBooted ) return "";
 
         let modelInfo = Modem.getModelInfo(this.modelId);
 
         if (this.isKnownModel)
             return this.interfaces[modemDatabase[this.vendorId][this.modelId].at];
         else {
-
-            if (Object.keys(this.interfaces).length === 3) return this.interfaces[2];
-            if (Object.keys(this.interfaces).length === 2) return this.interfaces[1];
-
+            switch(Object.keys(this.interfaces).length){
+                case 2: return this.interfaces[1];
+                case 3: return this.interfaces[2];
+                default: throw new Error("Unsupported modem");
+            }
         }
 
     }
@@ -154,7 +157,7 @@ export class Modem {
 
     }
 
-    public get rpiPort(): number {
+    public get rpiPort(): number | undefined {
 
         try {
 
@@ -207,7 +210,7 @@ export class Modem {
         audio: number;
         at: number;
         total: number;
-    } {
+    } | undefined {
 
         switch (modelId) {
             case 0x1001: return { "audio": 1, "at": 2, total: 3 };
@@ -228,7 +231,7 @@ export class Modem {
             Modem.getIdFromEnv(env),
             Number("0x" + env.ID_VENDOR_ID),
             Number("0x" + env.ID_MODEL_ID),
-            null
+            new Date()
         );
 
         modem.addInterface(parseInt(env.ID_USB_INTERFACE_NUM), env.DEVNAME);
@@ -264,19 +267,19 @@ export class Modem {
 
             let setModem: SetModem = {};
 
-            let modemDescriptors: ModemDescriptor[];
+            let modemDescriptors: ModemDescriptor[]= [];
             let bootId: string;
 
             try {
 
                 let obj = JSON.parse(readFileSync(config.pathSetModem, { "encoding": "utf8" }));
 
-                modemDescriptors = <ModemDescriptor[]>obj.modemDescriptors;
-                bootId = <string>obj.bootId;
+                modemDescriptors = obj.modemDescriptors as ModemDescriptor[];
+                bootId = obj.bootId as string;
 
             } catch (error) {
 
-                bootId = null
+                bootId = "";
             }
 
             if (Modem.currentBootId !== bootId) modemDescriptors = [];
@@ -300,7 +303,7 @@ export class Modem {
         try {
 
             var out = {
-                "modemDescriptors": <ModemDescriptor[]>[],
+                "modemDescriptors": [] as ModemDescriptor[],
                 "bootId": Modem.currentBootId
             };
 
