@@ -2,7 +2,7 @@
     "0x12d1": {
         "_comment": "Huawei",
         "0x1001": {
-            "_comment": "E169, K3765, K3520",
+            "_comment": "E169, K3765, K3520, E1550",
             "audio": 1,
             "at": 2,
             "total": 3
@@ -12,6 +12,21 @@
             "audio": 0,
             "at": 1,
             "total": 2
+        },
+        "0x140c": {
+            "_comment": "E17xx",
+            "audio": 2,
+            "at": 3
+        },
+         "0x140c": {
+            "_comment": "E1750",
+            "audio": 3,
+            "at": 4
+        },
+        "0x1506": {
+            "_comment": "E171 firmware 21.x : thanks Sergey Ivanov",
+            "audio": 2,
+            "at": 1
         }
     }
 }
