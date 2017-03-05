@@ -4,7 +4,7 @@
   "licence": "MIT",
   "main": "./out/lib/index.js",
   "types": "./out/lib/index.d.ts",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "scripts": {
     "postinstall": "npm run build",
     "build": "npm run tsc && npm run set-rules",
@@ -34,7 +34,7 @@
     "colors": "^1.1.2",
     "lockfile": "^1.0.3",
     "ts-events-extended": "garronej/ts-events-extended",
-    "typescript": "^2.1.6"
+    "typescript": "^2.2.1"
   },
   "devDependencies": {}
 }

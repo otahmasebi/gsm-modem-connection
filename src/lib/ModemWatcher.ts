@@ -1,7 +1,8 @@
 import { statSync, writeFileSync, watch, FSWatcher } from "fs";
-import { Modem, SetModem, config, delayReady } from "./Modem";
+import { Modem, SetModem, config } from "./Modem";
 import { SyncEvent, AsyncEvent, VoidSyncEvent } from "ts-events-extended";
 
+const delayReady= 4000;
 
 export class ModemWatcher {
 
@@ -17,7 +18,7 @@ export class ModemWatcher {
         try{ 
             statSync(config.pathSetModem);
         }catch(error){
-            Modem.exportSetModem(this.setModem);
+            Modem.exportSetModem({});
         }
 
 
@@ -48,16 +49,13 @@ export class ModemWatcher {
 
         this.setModem = Modem.importSetModem();
 
-
         for (let id of Object.keys(this.setModem))
-            if ((!oldSetModem[id] || !oldSetModem[id].fullyBooted) && this.setModem[id].fullyBooted)
+            if(!oldSetModem[id])
                 process.nextTick(() => this.evtConnect.post(this.setModem[id]));
 
-
         for (let id of Object.keys(oldSetModem))
-            if (!this.setModem[id]) {
+            if (!this.setModem[id])
                 this.evtDisconnect.post(oldSetModem[id]);
-            }
 
     }
 

@@ -4,27 +4,25 @@
         "0x1001": {
             "_comment": "E169, K3765, K3520, E1550",
             "audio": 1,
-            "at": 2,
-            "total": 3
+            "at": 2
         },
         "0x1003": {
             "_comment": "E160E",
             "audio": 0,
-            "at": 1,
-            "total": 2
+            "at": 1
         },
         "0x140c": {
             "_comment": "E17xx",
             "audio": 2,
             "at": 3
         },
-         "0x140c": {
+         "0x1436": {
             "_comment": "E1750",
             "audio": 3,
             "at": 4
         },
         "0x1506": {
-            "_comment": "E171 firmware 21.x : thanks Sergey Ivanov",
+            "_comment": "E171 firmware 21.x",
             "audio": 2,
             "at": 1
         }

@@ -12,9 +12,8 @@ export let config: {
 export let modemDatabase: {
     [vendorId: number]: {
         [modelId: number]: {
-            audio: number,
-            at: number,
-            total: number
+            audio: number;
+            at: number;
         }
     }
 } = (() => {
@@ -30,7 +29,7 @@ export let modemDatabase: {
 
     });
 
-    let out: any = {};
+    let out: typeof modemDatabase = {};
 
     let vendorId: number;
     let modelId: number;
@@ -47,8 +46,6 @@ export let modemDatabase: {
     return out;
 
 })();
-
-export let delayReady = 2000;
 
 export interface SetModem {
     [id: string]: Modem
@@ -96,27 +93,17 @@ export class Modem {
 
     }
 
-    public get fullyBooted(): boolean {
-
-        if (this.isKnownModel)
-            return (modemDatabase[this.vendorId][this.modelId].total === Object.keys(this.interfaces).length);
-        else
-            return ((this.currentDate.getTime() - this.upSince.getTime()) > delayReady);
-
-    }
 
     public get audioInterface(): string {
 
-        if( !this.fullyBooted ) return "";
 
         if (this.isKnownModel)
-            return this.interfaces[modemDatabase[this.vendorId][this.modelId].audio];
+            return this.interfaces[modemDatabase[this.vendorId][this.modelId].audio] || "";
         else {
-            switch(Object.keys(this.interfaces).length){
-                case 2: return this.interfaces[0];
-                case 3: return this.interfaces[1];
-                default: throw new Error("Unsupported modem");
-            }
+
+            let total= Object.keys(this.interfaces).length;
+
+            return this.interfaces[total-2] || "";
 
         }
 
@@ -124,18 +111,15 @@ export class Modem {
 
     public get atInterface(): string {
 
-        if( !this.fullyBooted ) return "";
-
-        let modelInfo = Modem.getModelInfo(this.modelId);
 
         if (this.isKnownModel)
-            return this.interfaces[modemDatabase[this.vendorId][this.modelId].at];
+            return this.interfaces[modemDatabase[this.vendorId][this.modelId].at] || "";
         else {
-            switch(Object.keys(this.interfaces).length){
-                case 2: return this.interfaces[1];
-                case 3: return this.interfaces[2];
-                default: throw new Error("Unsupported modem");
-            }
+
+            let total= Object.keys(this.interfaces).length;
+
+            return this.interfaces[total-1] || "";
+
         }
 
     }
@@ -157,14 +141,14 @@ export class Modem {
 
     }
 
-    public get rpiPort(): number | undefined {
+    public get rpiPort(): number {
 
         try {
 
             return parseInt(this.id.split(":")[1].split(".")[1]);
 
         } catch (error) {
-            return undefined;
+            return NaN;
         }
 
     }
@@ -181,14 +165,12 @@ export class Modem {
 
         delete this.interfaces[component];
 
-        this.upSince = new Date();
-
     }
 
 
     public get isKnownModel(): boolean {
 
-        return modemDatabase[this.vendorId].hasOwnProperty(this.modelId);
+        return (modemDatabase[this.vendorId] && modemDatabase[this.vendorId][this.modelId])?true:false;
 
     }
 
@@ -200,25 +182,10 @@ export class Modem {
             "isKnowModel": this.isKnownModel,
             "rpiPort": this.rpiPort,
             "atInterface": this.atInterface,
-            "audioInterface": this.audioInterface,
-            "isFullyBooted": this.fullyBooted
+            "audioInterface": this.audioInterface
         };
     }
 
-
-    private static getModelInfo(modelId: number): {
-        audio: number;
-        at: number;
-        total: number;
-    } | undefined {
-
-        switch (modelId) {
-            case 0x1001: return { "audio": 1, "at": 2, total: 3 };
-            case 0x1003: return { "audio": 0, "at": 1, total: 2 };
-            default: return undefined;
-        }
-
-    }
 
     public static getIdFromEnv(env: Env): string {
         return env.ID_PATH.slice(0, -1) + "x";
