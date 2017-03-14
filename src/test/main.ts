@@ -1,23 +1,19 @@
-import { ModemWatcher } from "../lib/index";
+import { Monitor } from "../lib/index";
 
-let modemWatcher = new ModemWatcher();
+Monitor.evtModemConnect.attach( accessPoint => console.log("CONNECT", accessPoint.toString()) );
 
-console.log("Awaiting GSM modem connections...");
-
-modemWatcher.evtConnect.attach(modem => console.log("CONNECT", modem.infos));
-
-modemWatcher.evtDisconnect.attachOnce(modem => {
-
-    console.log(`DISCONNECT\n${JSON.stringify(modem.infos, null, 2)}\nEnd!`);
-
-    modemWatcher.stop();
-
-});
+Monitor.evtModemDisconnect.attach( accessPoint => console.log("DISCONNECT", accessPoint.toString()));
 
 
+setTimeout(()=>{
 
+    console.log("TIMEOUT!");
 
+    for( let accessPoint of Monitor.connectedModems )
+        console.log(accessPoint.toString());
+    
+    Monitor.stop();
 
-
+}, 60000);
 
 

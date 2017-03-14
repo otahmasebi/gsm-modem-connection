@@ -1,18 +1,13 @@
 {
   "name": "gsm-modem-connection",
   "description": "Manage GSM modem connection",
-  "licence": "MIT",
+  "license": "MIT",
   "main": "./out/lib/index.js",
   "types": "./out/lib/index.d.ts",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "scripts": {
-    "postinstall": "npm run build",
-    "build": "npm run tsc && npm run set-rules",
+    "postinstall": "npm run tsc",
     "tsc": "./node_modules/.bin/tsc -p ./tsconfig.json",
-    "uninstall": "npm run remove-rules && npm run clean",
-    "set-rules": "sudo node ./out/lib/udevRules.js set",
-    "remove-rules": "sudo node ./out/lib/udevRules.js remove",
-    "clean": "rm -rf ./out ./node_modules",
     "test": "node ./out/test/main"
   },
   "repository": {
@@ -29,12 +24,12 @@
     "udev"
   ],
   "dependencies": {
-    "@types/lockfile": "^0.4.29",
     "@types/node": "^4.0.0",
-    "colors": "^1.1.2",
-    "lockfile": "^1.0.3",
+    "@types/usb": "^1.1.2",
+    "trackable-map": "garronej/trackable-map",
     "ts-events-extended": "garronej/ts-events-extended",
-    "typescript": "^2.2.1"
+    "typescript": "^2.2.1",
+    "udev": "^0.4.0"
   },
   "devDependencies": {}
 }
