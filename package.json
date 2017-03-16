@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "./out/lib/index.js",
   "types": "./out/lib/index.d.ts",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "postinstall": "npm run tsc",
     "tsc": "./node_modules/.bin/tsc -p ./tsconfig.json",

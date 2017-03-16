@@ -26,9 +26,9 @@ const accessPoints= new TrackableMap<string, AccessPoint>();
 
 export class Monitor {
 
-    public static readonly evtModemConnect= new SyncEvent<AccessPoint>();
+    public static readonly evtModemConnect = new SyncEvent<AccessPoint>();
 
-    public static readonly evtModemDisconnect= new SyncEvent<AccessPoint>();
+    public static readonly evtModemDisconnect = new SyncEvent<AccessPoint>();
 
     public static get connectedModems() { return accessPoints.valuesAsArray(); }
 
@@ -36,14 +36,14 @@ export class Monitor {
 
 }
 
-accessPoints.evtSet.attach(({ value }) => Monitor.evtModemConnect.post(value));
-accessPoints.evtDelete.attach(({ value }) => Monitor.evtModemDisconnect.post(value));
+accessPoints.evtSet.attach(([accessPoint]) => Monitor.evtModemConnect.post(accessPoint));
+accessPoints.evtDelete.attach(([accessPoint]) => Monitor.evtModemDisconnect.post(accessPoint));
 
 function buildAccessPointId(udevEvt_ID_PATH: string): string {
     return udevEvt_ID_PATH.slice(0, -1) + "x";
 };
 
-function isRelevantUdevEvt(udevEvt: any ): udevEvt is UdevEvt {
+function isRelevantUdevEvt(udevEvt: any): udevEvt is UdevEvt {
 
     return (
         knownVendorIds.indexOf(udevEvt.ID_VENDOR_ID) >= 0 &&
@@ -53,7 +53,7 @@ function isRelevantUdevEvt(udevEvt: any ): udevEvt is UdevEvt {
 
 }
 
-const pendingAccessPoints: { [id: string]: NodeJS.Timer }= {};
+const pendingAccessPoints: { [id: string]: NodeJS.Timer } = {};
 
 monitor.on("add", udevEvt => {
 
