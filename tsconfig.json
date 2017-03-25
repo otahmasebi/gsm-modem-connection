@@ -11,7 +11,7 @@
                     "es2015.collection"
             ],
         "declaration": true,
-        "outDir": "./out",
+        "outDir": "./dist",
         "strictNullChecks": true
     },
     "filesGlob": [
