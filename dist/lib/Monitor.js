@@ -9,7 +9,7 @@ var trackable_map_1 = require("trackable-map");
 var delayModemReady = 4000;
 var monitor = udev.monitor();
 var accessPoints = new trackable_map_1.TrackableMap();
-var Monitor = (function () {
+var Monitor = /** @class */ (function () {
     function Monitor() {
     }
     Object.defineProperty(Monitor, "connectedModems", {
@@ -18,10 +18,10 @@ var Monitor = (function () {
         configurable: true
     });
     Monitor.stop = function () { monitor.close(); };
+    Monitor.evtModemConnect = new ts_events_extended_1.SyncEvent();
+    Monitor.evtModemDisconnect = new ts_events_extended_1.SyncEvent();
     return Monitor;
 }());
-Monitor.evtModemConnect = new ts_events_extended_1.SyncEvent();
-Monitor.evtModemDisconnect = new ts_events_extended_1.SyncEvent();
 exports.Monitor = Monitor;
 accessPoints.evtSet.attach(function (_a) {
     var accessPoint = _a[0];
@@ -38,7 +38,7 @@ function buildAccessPointId(udevEvt_ID_PATH) {
 function isRelevantUdevEvt(udevEvt) {
     return (knownVendorIds.indexOf(udevEvt.ID_VENDOR_ID) >= 0 &&
         udevEvt.hasOwnProperty("ID_USB_INTERFACE_NUM") &&
-        udevEvt.ID_USB_DRIVER !== "usb-storage");
+        udevEvt.SUBSYSTEM === "tty");
 }
 var pendingAccessPoints = {};
 monitor.on("add", function (udevEvt) {

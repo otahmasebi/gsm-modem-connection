@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var recordIfNum_1 = require("./recordIfNum");
-var AccessPoint = (function () {
+var AccessPoint = /** @class */ (function () {
     function AccessPoint(id, vendorId, modelId) {
         this.id = id;
         this.vendorId = vendorId;
@@ -16,15 +16,26 @@ var AccessPoint = (function () {
             "IS KNOWN MODEL": this.isKnownModel,
             "PATH TO AUDIO INTERFACE": this.audioIfPath,
             "PATH TO DATA INTERFACE": this.dataIfPath,
-            "INTERFACE COUNT": Object.keys(this.ifPathByNum).length
+            "TTY INTERFACE COUNT": Object.keys(this.ifPathByNum).length
         }, null, 2);
     };
+    Object.defineProperty(AccessPoint.prototype, "sortedIfNum", {
+        get: function () {
+            return Object.keys(this.ifPathByNum)
+                .map(function (ifNum) { return parseInt(ifNum); })
+                .sort(function (i, j) { return i - j; });
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(AccessPoint.prototype, "audioIfPath", {
         get: function () {
             if (this.isKnownModel)
                 return this.ifPathByNum[recordIfNum_1.recordIfNum[this.vendorId][this.modelId].audio];
-            else
-                return this.ifPathByNum[Object.keys(this.ifPathByNum).length - 2];
+            else {
+                var sortedIfNum = this.sortedIfNum;
+                return this.ifPathByNum[sortedIfNum[sortedIfNum.length - 2]];
+            }
         },
         enumerable: true,
         configurable: true
@@ -33,8 +44,10 @@ var AccessPoint = (function () {
         get: function () {
             if (this.isKnownModel)
                 return this.ifPathByNum[recordIfNum_1.recordIfNum[this.vendorId][this.modelId].data];
-            else
-                return this.ifPathByNum[Object.keys(this.ifPathByNum).length - 1];
+            else {
+                var sortedIfNum = this.sortedIfNum;
+                return this.ifPathByNum[sortedIfNum[sortedIfNum.length - 1]];
+            }
         },
         enumerable: true,
         configurable: true

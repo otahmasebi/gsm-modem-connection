@@ -3,14 +3,12 @@
         "module": "commonjs",
         "target": "es5",
         "lib": [
-                    "dom",
-                    "es5",
-                    "scripthost",
-                    "es2015.promise",
-                    "es2015.core",
-                    "es2015.collection"
-            ],
+            "es5",
+            "es2015",
+            "dom"
+        ],
         "declaration": true,
+        "newLine": "LF",
         "outDir": "./dist",
         "strictNullChecks": true
     },
@@ -18,4 +16,3 @@
         "./src/**/*.ts"
     ]
 }
-

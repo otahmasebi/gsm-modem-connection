@@ -17,6 +17,7 @@ interface UdevEvt {
     ID_MODEL_ID: string;
     ID_VENDOR_ID: string;
     ID_USB_DRIVER: string;
+    SUBSYSTEM: "tty";
     [key: string]: string;
 }
 
@@ -48,7 +49,7 @@ function isRelevantUdevEvt(udevEvt: any): udevEvt is UdevEvt {
     return (
         knownVendorIds.indexOf(udevEvt.ID_VENDOR_ID) >= 0 &&
         udevEvt.hasOwnProperty("ID_USB_INTERFACE_NUM") &&
-        udevEvt.ID_USB_DRIVER !== "usb-storage"
+        udevEvt.SUBSYSTEM === "tty"
     );
 
 }

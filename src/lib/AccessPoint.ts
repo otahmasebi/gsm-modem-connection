@@ -1,7 +1,5 @@
 import { recordIfNum } from "./recordIfNum";
 
-
-
 export class AccessPoint {
 
     public readonly ifPathByNum: { [num: number]: string }= {};
@@ -20,10 +18,17 @@ export class AccessPoint {
             "IS KNOWN MODEL": this.isKnownModel,
             "PATH TO AUDIO INTERFACE": this.audioIfPath,
             "PATH TO DATA INTERFACE": this.dataIfPath,
-            "INTERFACE COUNT": Object.keys(this.ifPathByNum).length
+            "TTY INTERFACE COUNT": Object.keys(this.ifPathByNum).length
         }, null, 2);
     }
 
+    private get sortedIfNum(): number[] {
+
+        return Object.keys(this.ifPathByNum)
+            .map(ifNum => parseInt(ifNum)!)
+            .sort((i, j) => i - j);
+
+    }
 
     public get audioIfPath(): string {
 
@@ -31,10 +36,14 @@ export class AccessPoint {
             return this.ifPathByNum[
                 recordIfNum[this.vendorId][this.modelId].audio
             ];
-        else
+        else{
+
+            let sortedIfNum= this.sortedIfNum;
+
             return this.ifPathByNum[
-                Object.keys(this.ifPathByNum).length - 2
+                sortedIfNum[sortedIfNum.length-2]
             ];
+        }
 
     }
 
@@ -42,10 +51,16 @@ export class AccessPoint {
 
         if (this.isKnownModel)
             return this.ifPathByNum[recordIfNum[this.vendorId][this.modelId].data];
-        else
-            return this.ifPathByNum[Object.keys(this.ifPathByNum).length - 1];
-    }
+        else{
 
+            let sortedIfNum= this.sortedIfNum;
+
+            return this.ifPathByNum[
+                sortedIfNum[sortedIfNum.length-1]
+            ];
+
+        }
+    }
 
     public get rpiPort(): number {
 
@@ -57,18 +72,10 @@ export class AccessPoint {
 
     }
 
-
-
-
     public get isKnownModel(): boolean {
 
         return (recordIfNum[this.vendorId] && recordIfNum[this.vendorId][this.modelId]) ? true : false;
 
     }
-
-
-
-
-
 
 }

@@ -7,6 +7,7 @@ export declare class AccessPoint {
     };
     constructor(id: string, vendorId: string, modelId: string);
     toString(): string;
+    private readonly sortedIfNum;
     readonly audioIfPath: string;
     readonly dataIfPath: string;
     readonly rpiPort: number;

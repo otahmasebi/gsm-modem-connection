@@ -4,7 +4,7 @@
   "license": "MIT",
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "scripts": {
     "tsc": "./node_modules/.bin/tsc -p ./tsconfig.json",
     "test": "node ./dist/test/main"
@@ -29,7 +29,6 @@
   },
   "devDependencies": {
     "typescript": "^2.2.1",
-    "@types/usb": "^1.1.2",
     "@types/node": "^4.0.0"
   }
 }
