@@ -7,7 +7,7 @@ import * as udev from "udev";
 import { SyncEvent } from "ts-events-extended";
 import { TrackableMap } from "trackable-map";
 
-const delayModemReady= 4000;
+const delayModemReady = 4000;
 
 interface UdevEvt {
     DEVNAME: string;
@@ -20,25 +20,6 @@ interface UdevEvt {
     SUBSYSTEM: "tty";
     [key: string]: string;
 }
-
-const monitor: { close(); } & NodeJS.EventEmitter= udev.monitor();
-
-const accessPoints= new TrackableMap<string, AccessPoint>();
-
-export class Monitor {
-
-    public static readonly evtModemConnect = new SyncEvent<AccessPoint>();
-
-    public static readonly evtModemDisconnect = new SyncEvent<AccessPoint>();
-
-    public static get connectedModems() { return accessPoints.valuesAsArray(); }
-
-    public static stop(): void { monitor.close(); }
-
-}
-
-accessPoints.evtSet.attach(([accessPoint]) => Monitor.evtModemConnect.post(accessPoint));
-accessPoints.evtDelete.attach(([accessPoint]) => Monitor.evtModemDisconnect.post(accessPoint));
 
 function buildAccessPointId(udevEvt_ID_PATH: string): string {
     return udevEvt_ID_PATH.slice(0, -1) + "x";
@@ -54,59 +35,114 @@ function isRelevantUdevEvt(udevEvt: any): udevEvt is UdevEvt {
 
 }
 
-const pendingAccessPoints: { [id: string]: NodeJS.Timer } = {};
 
-monitor.on("add", udevEvt => {
+export class Monitor {
 
-    if (!isRelevantUdevEvt(udevEvt)) return;
+    private static instance: Monitor | undefined = undefined;
 
-    let id = buildAccessPointId(udevEvt.ID_PATH);
+    public static getInstance(): Monitor {
 
-    if (pendingAccessPoints[id]) return;
+        if (this.instance) return this.instance;
 
-    let accessPoint = new AccessPoint(id, udevEvt.ID_VENDOR_ID, udevEvt.ID_MODEL_ID);
+        this.instance = new Monitor();
 
-    accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
+        return this.getInstance();
 
-    let onAdd = udevEvt => {
-
-        if (
-            !isRelevantUdevEvt(udevEvt) ||
-            buildAccessPointId(udevEvt.ID_PATH) !== id
-        ) return;
-
-        accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
-
-    };
-
-    monitor.on("add", onAdd);
-
-    pendingAccessPoints[id] = setTimeout(() => {
-
-        monitor.removeListener("add", onAdd);
-
-        delete pendingAccessPoints[id];
-
-        accessPoints.set(id, accessPoint);
-
-    }, delayModemReady);
-
-});
-
-monitor.on("remove", udevEvt => {
-
-    if (!isRelevantUdevEvt(udevEvt)) return;
-
-    let id = buildAccessPointId(udevEvt.ID_PATH);
-
-    if (pendingAccessPoints[id]) {
-        clearTimeout(pendingAccessPoints[id]);
-        delete pendingAccessPoints[id];
     }
 
-    accessPoints.delete(id);
 
-});
+    public readonly evtModemConnect = new SyncEvent<AccessPoint>();
+    public readonly evtModemDisconnect = new SyncEvent<AccessPoint>();
 
-for (let udevEvt of udev.list())
-    monitor.emit("add", udevEvt);
+    public get connectedModems() {
+        return this.accessPoints.valueSet()
+    }
+
+    public stop(): void {
+        this.monitor.close();
+        Monitor.instance= undefined;
+    }
+
+    private readonly pendingAccessPoints = new Map<string, NodeJS.Timer>();
+    private readonly accessPoints = new TrackableMap<string, AccessPoint>();
+
+    private readonly monitor: { close(); } & NodeJS.EventEmitter = udev.monitor();
+
+    private constructor() {
+
+        this.accessPoints.evtSet.attach(([accessPoint]) => this.evtModemConnect.post(accessPoint));
+        this.accessPoints.evtDelete.attach(([accessPoint]) => this.evtModemDisconnect.post(accessPoint));
+
+        let evtAdd = new SyncEvent<UdevEvt>();
+        let evtRemove = new SyncEvent<UdevEvt>();
+
+        this.monitor.on("add", udevEvt => {
+
+            if (!isRelevantUdevEvt(udevEvt)) return;
+
+            evtAdd.post(udevEvt);
+
+        });
+
+        this.monitor.on("remove", udevEvt => {
+
+            if (!isRelevantUdevEvt(udevEvt)) return;
+
+            evtRemove.post(udevEvt);
+
+        });
+
+        evtAdd.attach(udevEvt => {
+
+            let id = buildAccessPointId(udevEvt.ID_PATH);
+
+            if (this.pendingAccessPoints.has(id)) return;
+
+            let accessPoint = new AccessPoint(id, udevEvt.ID_VENDOR_ID, udevEvt.ID_MODEL_ID);
+
+            accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
+
+            evtAdd.attach(
+                udevEvt=> buildAccessPointId(udevEvt.ID_PATH) === id,
+                id,
+                udevEvt => {
+
+                    accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
+
+                }
+            );
+
+            this.pendingAccessPoints.set(id, setTimeout(() => {
+
+                this.pendingAccessPoints.delete(id);
+
+                evtAdd.detach({ "boundTo": id });
+
+                this.accessPoints.set(id, accessPoint);
+
+            }, delayModemReady));
+
+        });
+
+        evtRemove.attach(udevEvt => {
+
+            let id = buildAccessPointId(udevEvt.ID_PATH);
+
+            if (this.pendingAccessPoints.has(id)) {
+
+                clearTimeout(this.pendingAccessPoints.get(id)!);
+                this.pendingAccessPoints.delete(id);;
+                evtAdd.detach({ "boundTo": id });
+
+            }
+
+            this.accessPoints.delete(id);
+
+        });
+
+        for (let udevEvt of udev.list())
+            this.monitor.emit("add", udevEvt);
+
+    }
+
+}

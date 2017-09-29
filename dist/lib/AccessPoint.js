@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var recordIfNum_1 = require("./recordIfNum");
+var md5 = require("md5");
 var AccessPoint = /** @class */ (function () {
     function AccessPoint(id, vendorId, modelId) {
         this.id = id;
@@ -9,15 +10,18 @@ var AccessPoint = /** @class */ (function () {
         this.ifPathByNum = {};
     }
     AccessPoint.prototype.toString = function () {
-        return JSON.stringify({
-            "ACCESS POINT UNIQ ID": this.id,
-            "VENDOR ID": "0x" + this.vendorId,
-            "MODEL ID": "0x" + this.modelId,
-            "IS KNOWN MODEL": this.isKnownModel,
-            "PATH TO AUDIO INTERFACE": this.audioIfPath,
-            "PATH TO DATA INTERFACE": this.dataIfPath,
-            "TTY INTERFACE COUNT": Object.keys(this.ifPathByNum).length
-        }, null, 2);
+        return [
+            "",
+            "ACCESS POINT UNIQ ID: '" + this.id + "'",
+            "FRIENDLY ID\": '" + this.friendlyId + "'",
+            "VENDOR ID\": '0x" + this.vendorId + "'",
+            "MODEL ID\": '0x" + this.modelId + "'",
+            "IS KNOWN MODEL\": '" + this.isKnownModel + "'",
+            "PATH TO AUDIO INTERFACE\": '" + this.audioIfPath + "'",
+            "PATH TO DATA INTERFACE\": '" + this.dataIfPath + "'",
+            "TTY INTERFACE COUNT\": '" + Object.keys(this.ifPathByNum).length + "'",
+            ""
+        ].join("\n");
     };
     Object.defineProperty(AccessPoint.prototype, "sortedIfNum", {
         get: function () {
@@ -60,6 +64,15 @@ var AccessPoint = /** @class */ (function () {
             catch (error) {
                 return NaN;
             }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(AccessPoint.prototype, "friendlyId", {
+        get: function () {
+            var audioIfPath = this.audioIfPath;
+            var match = audioIfPath.match(/^\/dev\/ttyUSB([0-9]+)$/);
+            return "Dongle" + (match ? match[1] : md5(audioIfPath).substring(0, 6));
         },
         enumerable: true,
         configurable: true

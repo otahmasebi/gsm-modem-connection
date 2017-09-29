@@ -11,5 +11,6 @@ export declare class AccessPoint {
     readonly audioIfPath: string;
     readonly dataIfPath: string;
     readonly rpiPort: number;
+    readonly friendlyId: string;
     readonly isKnownModel: boolean;
 }

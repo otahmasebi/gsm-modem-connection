@@ -4,13 +4,14 @@
         "target": "es5",
         "lib": [
             "es5",
-            "es2015",
-            "dom"
+            "es2015"
         ],
         "declaration": true,
-        "newLine": "LF",
         "outDir": "./dist",
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "sourceMap": false,
+        "newLine": "LF",
+        "downlevelIteration": true
     },
     "filesGlob": [
         "./src/**/*.ts"

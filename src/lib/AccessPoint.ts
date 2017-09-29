@@ -1,4 +1,5 @@
 import { recordIfNum } from "./recordIfNum";
+import * as md5 from "md5";
 
 export class AccessPoint {
 
@@ -11,15 +12,18 @@ export class AccessPoint {
     ) { }
 
     public toString(): string {
-        return JSON.stringify({
-            "ACCESS POINT UNIQ ID": this.id,
-            "VENDOR ID": "0x" + this.vendorId,
-            "MODEL ID": "0x" + this.modelId,
-            "IS KNOWN MODEL": this.isKnownModel,
-            "PATH TO AUDIO INTERFACE": this.audioIfPath,
-            "PATH TO DATA INTERFACE": this.dataIfPath,
-            "TTY INTERFACE COUNT": Object.keys(this.ifPathByNum).length
-        }, null, 2);
+        return [
+            ``,
+            `ACCESS POINT UNIQ ID: '${this.id}'`,
+            `FRIENDLY ID": '${this.friendlyId}'`,
+            `VENDOR ID": '0x${this.vendorId}'`,
+            `MODEL ID": '0x${this.modelId}'`,
+            `IS KNOWN MODEL": '${this.isKnownModel}'`,
+            `PATH TO AUDIO INTERFACE": '${this.audioIfPath}'`,
+            `PATH TO DATA INTERFACE": '${this.dataIfPath}'`,
+            `TTY INTERFACE COUNT": '${Object.keys(this.ifPathByNum).length}'`,
+            ``
+        ].join("\n");
     }
 
     private get sortedIfNum(): number[] {
@@ -69,6 +73,16 @@ export class AccessPoint {
         } catch (error) {
             return NaN;
         }
+
+    }
+
+    public get friendlyId(): string {
+
+        let { audioIfPath } = this;
+
+        let match = audioIfPath.match(/^\/dev\/ttyUSB([0-9]+)$/);
+
+        return `Dongle${match ? match[1] : md5(audioIfPath).substring(0, 6)}`;
 
     }
 

@@ -1,19 +1,20 @@
 import { Monitor } from "../lib/index";
 
-Monitor.evtModemConnect.attach( accessPoint => console.log("CONNECT", accessPoint.toString()) );
+let monitor = Monitor.getInstance();
 
-Monitor.evtModemDisconnect.attach( accessPoint => console.log("DISCONNECT", accessPoint.toString()));
+monitor.evtModemConnect.attach(accessPoint => console.log("CONNECT", accessPoint.toString()));
 
+monitor.evtModemDisconnect.attach(accessPoint => console.log("DISCONNECT", accessPoint.toString()));
 
-setTimeout(()=>{
+setTimeout(() => {
 
-    console.log("TIMEOUT!");
+    console.log("END OF TEST SESSION");
 
-    for( let accessPoint of Monitor.connectedModems )
+    for (let accessPoint of monitor.connectedModems)
         console.log(accessPoint.toString());
-    
-    Monitor.stop();
 
-}, 60000);
+    monitor.stop();
+
+}, 30000);
 
 
