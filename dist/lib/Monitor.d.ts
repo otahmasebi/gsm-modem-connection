@@ -2,7 +2,7 @@ import { AccessPoint } from "./AccessPoint";
 import { SyncEvent } from "ts-events-extended";
 export declare class Monitor {
     private static instance;
-    static getInstance(): Monitor;
+    static getInstance(log?: false | typeof console.log): Monitor;
     readonly evtModemConnect: SyncEvent<AccessPoint>;
     readonly evtModemDisconnect: SyncEvent<AccessPoint>;
     readonly connectedModems: Set<AccessPoint>;

@@ -40,11 +40,15 @@ export class Monitor {
 
     private static instance: Monitor | undefined = undefined;
 
-    public static getInstance(): Monitor {
+    public static getInstance(
+        log: false | typeof console.log= console.log.bind(console)
+    ): Monitor {
 
-        if (this.instance) return this.instance;
+        if (this.instance){
+             return this.instance;
+        }
 
-        this.instance = new Monitor();
+        this.instance = new Monitor(log || (()=> {}));
 
         return this.getInstance();
 
@@ -68,17 +72,33 @@ export class Monitor {
 
     private readonly monitor: { close(); } & NodeJS.EventEmitter = udev.monitor();
 
-    private constructor() {
+    private constructor(log: typeof console.log) {
 
-        this.accessPoints.evtSet.attach(([accessPoint]) => this.evtModemConnect.post(accessPoint));
-        this.accessPoints.evtDelete.attach(([accessPoint]) => this.evtModemDisconnect.post(accessPoint));
+        this.accessPoints.evtSet.attach(([accessPoint]) => { 
+
+            log("<MODEM CONNECT:>", accessPoint.toString());
+            
+            this.evtModemConnect.post(accessPoint); 
+        
+        
+        });
+
+        this.accessPoints.evtDelete.attach(([accessPoint]) => { 
+
+            log("<MODEM DISCONNECT:>",accessPoint.toString());
+
+            this.evtModemDisconnect.post(accessPoint);
+
+        });
 
         let evtAdd = new SyncEvent<UdevEvt>();
         let evtRemove = new SyncEvent<UdevEvt>();
 
         this.monitor.on("add", udevEvt => {
 
-            if (!isRelevantUdevEvt(udevEvt)) return;
+            if (!isRelevantUdevEvt(udevEvt)){ 
+                return;
+            }
 
             evtAdd.post(udevEvt);
 
@@ -86,7 +106,9 @@ export class Monitor {
 
         this.monitor.on("remove", udevEvt => {
 
-            if (!isRelevantUdevEvt(udevEvt)) return;
+            if (!isRelevantUdevEvt(udevEvt)){ 
+                return;
+            }
 
             evtRemove.post(udevEvt);
 
@@ -96,7 +118,9 @@ export class Monitor {
 
             let id = buildAccessPointId(udevEvt.ID_PATH);
 
-            if (this.pendingAccessPoints.has(id)) return;
+            if (this.pendingAccessPoints.has(id)){
+                 return;
+            }
 
             let accessPoint = new AccessPoint(id, udevEvt.ID_VENDOR_ID, udevEvt.ID_MODEL_ID);
 
@@ -140,8 +164,11 @@ export class Monitor {
 
         });
 
-        for (let udevEvt of udev.list())
+        for (let udevEvt of udev.list()){
+
             this.monitor.emit("add", udevEvt);
+
+        }
 
     }
 

@@ -43,7 +43,7 @@ function isRelevantUdevEvt(udevEvt) {
         udevEvt.SUBSYSTEM === "tty");
 }
 var Monitor = /** @class */ (function () {
-    function Monitor() {
+    function Monitor(log) {
         var _this = this;
         this.evtModemConnect = new ts_events_extended_1.SyncEvent();
         this.evtModemDisconnect = new ts_events_extended_1.SyncEvent();
@@ -52,28 +52,33 @@ var Monitor = /** @class */ (function () {
         this.monitor = udev.monitor();
         this.accessPoints.evtSet.attach(function (_a) {
             var _b = __read(_a, 1), accessPoint = _b[0];
-            return _this.evtModemConnect.post(accessPoint);
+            log("<MODEM CONNECT:>", accessPoint.toString());
+            _this.evtModemConnect.post(accessPoint);
         });
         this.accessPoints.evtDelete.attach(function (_a) {
             var _b = __read(_a, 1), accessPoint = _b[0];
-            return _this.evtModemDisconnect.post(accessPoint);
+            log("<MODEM DISCONNECT:>", accessPoint.toString());
+            _this.evtModemDisconnect.post(accessPoint);
         });
         var evtAdd = new ts_events_extended_1.SyncEvent();
         var evtRemove = new ts_events_extended_1.SyncEvent();
         this.monitor.on("add", function (udevEvt) {
-            if (!isRelevantUdevEvt(udevEvt))
+            if (!isRelevantUdevEvt(udevEvt)) {
                 return;
+            }
             evtAdd.post(udevEvt);
         });
         this.monitor.on("remove", function (udevEvt) {
-            if (!isRelevantUdevEvt(udevEvt))
+            if (!isRelevantUdevEvt(udevEvt)) {
                 return;
+            }
             evtRemove.post(udevEvt);
         });
         evtAdd.attach(function (udevEvt) {
             var id = buildAccessPointId(udevEvt.ID_PATH);
-            if (_this.pendingAccessPoints.has(id))
+            if (_this.pendingAccessPoints.has(id)) {
                 return;
+            }
             var accessPoint = new AccessPoint_1.AccessPoint(id, udevEvt.ID_VENDOR_ID, udevEvt.ID_MODEL_ID);
             accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
             evtAdd.attach(function (udevEvt) { return buildAccessPointId(udevEvt.ID_PATH) === id; }, id, function (udevEvt) {
@@ -110,10 +115,12 @@ var Monitor = /** @class */ (function () {
         }
         var e_1, _c;
     }
-    Monitor.getInstance = function () {
-        if (this.instance)
+    Monitor.getInstance = function (log) {
+        if (log === void 0) { log = console.log.bind(console); }
+        if (this.instance) {
             return this.instance;
-        this.instance = new Monitor();
+        }
+        this.instance = new Monitor(log || (function () { }));
         return this.getInstance();
     };
     Object.defineProperty(Monitor.prototype, "connectedModems", {
