@@ -1,11 +1,7 @@
-import { AccessPoint } from "../lib/AccessPoint";
 import { recordIfNum } from "../lib/recordIfNum";
 const knownVendorIds = Object.keys(recordIfNum);
 
 import * as udev from "udev";
-
-import { SyncEvent } from "ts-events-extended";
-import { TrackableMap } from "trackable-map";
 
 
 interface UdevEvt {
@@ -21,8 +17,6 @@ interface UdevEvt {
 }
 
 const monitor: { close(); } & NodeJS.EventEmitter= udev.monitor();
-
-const accessPoints= new TrackableMap<string, AccessPoint>();
 
 function matchTty(udevEvt: any): udevEvt is UdevEvt {
 

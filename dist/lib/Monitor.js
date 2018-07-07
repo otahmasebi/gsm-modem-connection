@@ -44,6 +44,7 @@ function isRelevantUdevEvt(udevEvt) {
 }
 var Monitor = /** @class */ (function () {
     function Monitor(log) {
+        var e_1, _a;
         var _this = this;
         this.evtModemConnect = new ts_events_extended_1.SyncEvent();
         this.evtModemDisconnect = new ts_events_extended_1.SyncEvent();
@@ -101,19 +102,18 @@ var Monitor = /** @class */ (function () {
             _this.accessPoints.delete(id);
         });
         try {
-            for (var _a = __values(udev.list()), _b = _a.next(); !_b.done; _b = _a.next()) {
-                var udevEvt = _b.value;
+            for (var _b = __values(udev.list()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var udevEvt = _c.value;
                 this.monitor.emit("add", udevEvt);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
             }
             finally { if (e_1) throw e_1.error; }
         }
-        var e_1, _c;
     }
     Monitor.getInstance = function (log) {
         if (log === void 0) { log = console.log.bind(console); }
