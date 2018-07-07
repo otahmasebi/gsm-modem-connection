@@ -54,6 +54,9 @@ export class Monitor {
 
     }
 
+    public static get hasInstance(): boolean {
+        return !!this.instance;
+    }
 
     public readonly evtModemConnect = new SyncEvent<AccessPoint>();
     public readonly evtModemDisconnect = new SyncEvent<AccessPoint>();

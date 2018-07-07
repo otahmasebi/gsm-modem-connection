@@ -123,6 +123,13 @@ var Monitor = /** @class */ (function () {
         this.instance = new Monitor(log || (function () { }));
         return this.getInstance();
     };
+    Object.defineProperty(Monitor, "hasInstance", {
+        get: function () {
+            return !!this.instance;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Monitor.prototype, "connectedModems", {
         get: function () {
             return this.accessPoints.valueSet();
