@@ -116,11 +116,11 @@ var Monitor = /** @class */ (function () {
         }
     }
     Monitor.getInstance = function (log) {
-        if (log === void 0) { log = console.log.bind(console); }
+        if (log === void 0) { log = function () { }; }
         if (this.instance) {
             return this.instance;
         }
-        this.instance = new Monitor(log || (function () { }));
+        this.instance = new Monitor(log);
         return this.getInstance();
     };
     Object.defineProperty(Monitor, "hasInstance", {

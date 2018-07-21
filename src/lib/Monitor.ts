@@ -41,14 +41,14 @@ export class Monitor {
     private static instance: Monitor | undefined = undefined;
 
     public static getInstance(
-        log: false | typeof console.log= console.log.bind(console)
+        log: typeof console.log= ()=>{}
     ): Monitor {
 
         if (this.instance){
              return this.instance;
         }
 
-        this.instance = new Monitor(log || (()=> {}));
+        this.instance = new Monitor(log);
 
         return this.getInstance();
 
