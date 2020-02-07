@@ -26,7 +26,7 @@
   "dependencies": {
     "md5": "^2.2.1",
     "trackable-map": "garronej/trackable-map",
-    "ts-events-extended": "garronej/ts-events-extended",
+    "ts-evt": "^4.3.3",
     "udev": "^0.4.0"
   },
   "devDependencies": {

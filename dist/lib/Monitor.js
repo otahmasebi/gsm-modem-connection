@@ -30,7 +30,7 @@ var AccessPoint_1 = require("./AccessPoint");
 var recordIfNum_1 = require("./recordIfNum");
 var knownVendorIds = Object.keys(recordIfNum_1.recordIfNum);
 var udev = require("udev");
-var ts_events_extended_1 = require("ts-events-extended");
+var ts_evt_1 = require("ts-evt");
 var trackable_map_1 = require("trackable-map");
 var delayModemReady = 4000;
 function buildAccessPointId(udevEvt_ID_PATH) {
@@ -46,8 +46,8 @@ var Monitor = /** @class */ (function () {
     function Monitor(log) {
         var e_1, _a;
         var _this = this;
-        this.evtModemConnect = new ts_events_extended_1.SyncEvent();
-        this.evtModemDisconnect = new ts_events_extended_1.SyncEvent();
+        this.evtModemConnect = new ts_evt_1.Evt();
+        this.evtModemDisconnect = new ts_evt_1.Evt();
         this.pendingAccessPoints = new Map();
         this.accessPoints = new trackable_map_1.TrackableMap();
         this.monitor = udev.monitor();
@@ -61,8 +61,8 @@ var Monitor = /** @class */ (function () {
             log("<MODEM DISCONNECT:>", accessPoint.toString());
             _this.evtModemDisconnect.post(accessPoint);
         });
-        var evtAdd = new ts_events_extended_1.SyncEvent();
-        var evtRemove = new ts_events_extended_1.SyncEvent();
+        var evtAdd = new ts_evt_1.Evt();
+        var evtRemove = new ts_evt_1.Evt();
         this.monitor.on("add", function (udevEvt) {
             if (!isRelevantUdevEvt(udevEvt)) {
                 return;

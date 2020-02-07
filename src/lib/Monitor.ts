@@ -4,7 +4,7 @@ const knownVendorIds = Object.keys(recordIfNum);
 
 import * as udev from "udev";
 
-import { SyncEvent } from "ts-events-extended";
+import { Evt } from "ts-evt";
 import { TrackableMap } from "trackable-map";
 
 const delayModemReady = 4000;
@@ -58,8 +58,8 @@ export class Monitor {
         return !!this.instance;
     }
 
-    public readonly evtModemConnect = new SyncEvent<AccessPoint>();
-    public readonly evtModemDisconnect = new SyncEvent<AccessPoint>();
+    public readonly evtModemConnect = new Evt<AccessPoint>();
+    public readonly evtModemDisconnect = new Evt<AccessPoint>();
 
     public get connectedModems() {
         return this.accessPoints.valueSet()
@@ -94,8 +94,8 @@ export class Monitor {
 
         });
 
-        let evtAdd = new SyncEvent<UdevEvt>();
-        let evtRemove = new SyncEvent<UdevEvt>();
+        let evtAdd = new Evt<UdevEvt>();
+        let evtRemove = new Evt<UdevEvt>();
 
         this.monitor.on("add", udevEvt => {
 
