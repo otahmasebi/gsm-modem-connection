@@ -25,8 +25,8 @@
   ],
   "dependencies": {
     "md5": "^2.2.1",
-    "trackable-map": "garronej/trackable-map",
-    "ts-evt": "^5.0.2",
+    "trackable-map": "github:garronej/trackable-map",
+    "ts-evt": "^6.0.0",
     "udev": "^0.4.0"
   },
   "devDependencies": {
