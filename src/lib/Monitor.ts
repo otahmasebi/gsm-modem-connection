@@ -4,7 +4,7 @@ const knownVendorIds = Object.keys(recordIfNum);
 
 import * as udev from "udev";
 
-import { Evt } from "ts-evt";
+import { Evt, VoidCtx } from "evt";
 import { TrackableMap } from "trackable-map";
 
 const delayModemReady = 4000;
@@ -117,6 +117,8 @@ export class Monitor {
 
         });
 
+        const ctxById= new Map<string, VoidCtx>();
+
         evtAdd.attach(udevEvt => {
 
             let id = buildAccessPointId(udevEvt.ID_PATH);
@@ -129,9 +131,13 @@ export class Monitor {
 
             accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
 
+            const ctx = Evt.newCtx();
+
+            ctxById.set(id, ctx);
+
             evtAdd.attach(
                 udevEvt=> buildAccessPointId(udevEvt.ID_PATH) === id,
-                id,
+                ctx,
                 udevEvt => {
 
                     accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
@@ -143,7 +149,7 @@ export class Monitor {
 
                 this.pendingAccessPoints.delete(id);
 
-                evtAdd.detach({ "boundTo": id });
+                evtAdd.detach(ctx);
 
                 this.accessPoints.set(id, accessPoint);
 
@@ -159,10 +165,12 @@ export class Monitor {
 
                 clearTimeout(this.pendingAccessPoints.get(id)!);
                 this.pendingAccessPoints.delete(id);;
-                evtAdd.detach({ "boundTo": id });
+
+                ctxById.get(id)?.done();
 
             }
 
+            ctxById.delete(id);
             this.accessPoints.delete(id);
 
         });

@@ -26,11 +26,11 @@
   "dependencies": {
     "md5": "^2.2.1",
     "trackable-map": "github:garronej/trackable-map",
-    "ts-evt": "^6.0.0",
+    "evt": "~1.0.0",
     "udev": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^8.9.1",
-    "typescript": "^2.9.2"
+    "typescript": "^3.8.0"
   }
 }

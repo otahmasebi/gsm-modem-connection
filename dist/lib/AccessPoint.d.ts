@@ -7,10 +7,10 @@ export declare class AccessPoint {
     };
     constructor(id: string, vendorId: string, modelId: string);
     toString(): string;
-    private readonly sortedIfNum;
-    readonly audioIfPath: string;
-    readonly dataIfPath: string;
-    readonly rpiPort: number;
-    readonly friendlyId: string;
-    readonly isKnownModel: boolean;
+    private get sortedIfNum();
+    get audioIfPath(): string;
+    get dataIfPath(): string;
+    get rpiPort(): number;
+    get friendlyId(): string;
+    get isKnownModel(): boolean;
 }

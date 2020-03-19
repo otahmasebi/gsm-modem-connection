@@ -15,22 +15,23 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
-    return {
+    if (o && typeof o.length === "number") return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var AccessPoint_1 = require("./AccessPoint");
 var recordIfNum_1 = require("./recordIfNum");
 var knownVendorIds = Object.keys(recordIfNum_1.recordIfNum);
 var udev = require("udev");
-var ts_evt_1 = require("ts-evt");
+var evt_1 = require("evt");
 var trackable_map_1 = require("trackable-map");
 var delayModemReady = 4000;
 function buildAccessPointId(udevEvt_ID_PATH) {
@@ -46,8 +47,8 @@ var Monitor = /** @class */ (function () {
     function Monitor(log) {
         var e_1, _a;
         var _this = this;
-        this.evtModemConnect = new ts_evt_1.Evt();
-        this.evtModemDisconnect = new ts_evt_1.Evt();
+        this.evtModemConnect = new evt_1.Evt();
+        this.evtModemDisconnect = new evt_1.Evt();
         this.pendingAccessPoints = new Map();
         this.accessPoints = new trackable_map_1.TrackableMap();
         this.monitor = udev.monitor();
@@ -61,8 +62,8 @@ var Monitor = /** @class */ (function () {
             log("<MODEM DISCONNECT:>", accessPoint.toString());
             _this.evtModemDisconnect.post(accessPoint);
         });
-        var evtAdd = new ts_evt_1.Evt();
-        var evtRemove = new ts_evt_1.Evt();
+        var evtAdd = new evt_1.Evt();
+        var evtRemove = new evt_1.Evt();
         this.monitor.on("add", function (udevEvt) {
             if (!isRelevantUdevEvt(udevEvt)) {
                 return;
@@ -75,6 +76,7 @@ var Monitor = /** @class */ (function () {
             }
             evtRemove.post(udevEvt);
         });
+        var ctxById = new Map();
         evtAdd.attach(function (udevEvt) {
             var id = buildAccessPointId(udevEvt.ID_PATH);
             if (_this.pendingAccessPoints.has(id)) {
@@ -82,23 +84,27 @@ var Monitor = /** @class */ (function () {
             }
             var accessPoint = new AccessPoint_1.AccessPoint(id, udevEvt.ID_VENDOR_ID, udevEvt.ID_MODEL_ID);
             accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
-            evtAdd.attach(function (udevEvt) { return buildAccessPointId(udevEvt.ID_PATH) === id; }, id, function (udevEvt) {
+            var ctx = evt_1.Evt.newCtx();
+            ctxById.set(id, ctx);
+            evtAdd.attach(function (udevEvt) { return buildAccessPointId(udevEvt.ID_PATH) === id; }, ctx, function (udevEvt) {
                 accessPoint.ifPathByNum[parseInt(udevEvt.ID_USB_INTERFACE_NUM)] = udevEvt.DEVNAME;
             });
             _this.pendingAccessPoints.set(id, setTimeout(function () {
                 _this.pendingAccessPoints.delete(id);
-                evtAdd.detach({ "boundTo": id });
+                evtAdd.detach(ctx);
                 _this.accessPoints.set(id, accessPoint);
             }, delayModemReady));
         });
         evtRemove.attach(function (udevEvt) {
+            var _a;
             var id = buildAccessPointId(udevEvt.ID_PATH);
             if (_this.pendingAccessPoints.has(id)) {
                 clearTimeout(_this.pendingAccessPoints.get(id));
                 _this.pendingAccessPoints.delete(id);
                 ;
-                evtAdd.detach({ "boundTo": id });
+                (_a = ctxById.get(id)) === null || _a === void 0 ? void 0 : _a.done();
             }
+            ctxById.delete(id);
             _this.accessPoints.delete(id);
         });
         try {
