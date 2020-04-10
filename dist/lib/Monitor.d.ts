@@ -1,11 +1,10 @@
 import { AccessPoint } from "./AccessPoint";
-import { Evt } from "evt";
 export declare class Monitor {
     private static instance;
     static getInstance(log?: typeof console.log): Monitor;
     static get hasInstance(): boolean;
-    readonly evtModemConnect: Evt<AccessPoint>;
-    readonly evtModemDisconnect: Evt<AccessPoint>;
+    readonly evtModemConnect: import("evt/dist/lib/types").Evt<AccessPoint>;
+    readonly evtModemDisconnect: import("evt/dist/lib/types").Evt<AccessPoint>;
     get connectedModems(): Set<AccessPoint>;
     stop(): void;
     private readonly pendingAccessPoints;
