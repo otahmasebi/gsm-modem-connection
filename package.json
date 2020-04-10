@@ -24,7 +24,7 @@
     "udev"
   ],
   "dependencies": {
-    "evt": "^1.6.1",
+    "evt": "^1.6.2",
     "md5": "^2.2.1",
     "trackable-map": "github:garronej/trackable-map",
     "udev": "^0.4.0"
