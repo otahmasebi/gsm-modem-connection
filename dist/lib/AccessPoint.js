@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccessPoint = void 0;
 var recordIfNum_1 = require("./recordIfNum");
 var md5 = require("md5");
 var AccessPoint = /** @class */ (function () {
@@ -29,7 +30,7 @@ var AccessPoint = /** @class */ (function () {
                 .map(function (ifNum) { return parseInt(ifNum); })
                 .sort(function (i, j) { return i - j; });
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(AccessPoint.prototype, "audioIfPath", {
@@ -41,7 +42,7 @@ var AccessPoint = /** @class */ (function () {
                 return this.ifPathByNum[sortedIfNum[sortedIfNum.length - 2]];
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(AccessPoint.prototype, "dataIfPath", {
@@ -53,7 +54,7 @@ var AccessPoint = /** @class */ (function () {
                 return this.ifPathByNum[sortedIfNum[sortedIfNum.length - 1]];
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(AccessPoint.prototype, "rpiPort", {
@@ -65,7 +66,7 @@ var AccessPoint = /** @class */ (function () {
                 return NaN;
             }
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(AccessPoint.prototype, "friendlyId", {
@@ -74,14 +75,14 @@ var AccessPoint = /** @class */ (function () {
             var match = audioIfPath.match(/^\/dev\/ttyUSB([0-9]+)$/);
             return "Dongle" + (match ? match[1] : md5(audioIfPath).substring(0, 6));
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(AccessPoint.prototype, "isKnownModel", {
         get: function () {
             return (recordIfNum_1.recordIfNum[this.vendorId] && recordIfNum_1.recordIfNum[this.vendorId][this.modelId]) ? true : false;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return AccessPoint;

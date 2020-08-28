@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.recordIfNum = void 0;
 exports.recordIfNum = {
     //Huawei
     "12d1": {

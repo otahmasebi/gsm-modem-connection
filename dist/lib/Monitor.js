@@ -27,6 +27,7 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Monitor = void 0;
 var AccessPoint_1 = require("./AccessPoint");
 var recordIfNum_1 = require("./recordIfNum");
 var knownVendorIds = Object.keys(recordIfNum_1.recordIfNum);
@@ -133,14 +134,14 @@ var Monitor = /** @class */ (function () {
         get: function () {
             return !!this.instance;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Monitor.prototype, "connectedModems", {
         get: function () {
             return this.accessPoints.valueSet();
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Monitor.prototype.stop = function () {
